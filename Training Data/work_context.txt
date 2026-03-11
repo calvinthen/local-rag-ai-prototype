@@ -1,0 +1,3 @@
+Calvin is a Frontend Developer who specializes in React and Tailwind CSS. 
+He is currently building a portfolio website to showcase his modern web apps. 
+He codes in VS Code and prefers using TypeScript for type safety.
