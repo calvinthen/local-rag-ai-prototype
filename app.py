@@ -12,7 +12,7 @@ Original file is located at
 import os
 from groq import Groq
 
-import os
+# 1. Setup your key
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 # 2. Ask the AI a question
@@ -45,3 +45,40 @@ completion = client.chat.completions.create(
 print("AI Response based on your file:")
 print(completion.choices[0].message.content)
 
+# List your filenames here
+my_files = ["work_context.txt", "gaming_context.txt"]
+
+def load_context(file_list):
+    combined_text = ""
+    for filename in file_list:
+        try:
+            with open(filename, "r") as f:
+                # Add a header so the AI knows which file it is reading
+                combined_text += f"\n--- Source: {filename} ---\n"
+                combined_text += f.read() + "\n"
+        except FileNotFoundError:
+            print(f"⚠️ Warning: {filename} not found in Colab folders!")
+
+    return combined_text
+
+# Execute the reading
+final_context = load_context(my_files)
+
+print("Files loaded successfully! Preview of context:")
+print(final_context[:200] + "...") # Show just the first 200 characters
+
+user_question = "Based on my files, what are the specs of my laptops?"
+
+completion = client.chat.completions.create(
+    model="llama-3.3-70b-versatile",
+    messages=[
+        {
+            "role": "system",
+            "content": f"You are a helpful assistant. Answer the question using ONLY the context provided below. Context:\n{final_context}"
+        },
+        {"role": "user", "content": user_question}
+    ],
+)
+
+print("\n--- AI ANSWER ---")
+print(completion.choices[0].message.content)
